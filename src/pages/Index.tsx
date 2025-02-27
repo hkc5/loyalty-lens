@@ -67,9 +67,9 @@ const Index = () => {
             <CardFooter>
               <Button 
                 className="w-full"
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate("/auth?role=sales")}
               >
-                Open Sales Assistant
+                Sign in as Sales Associate
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardFooter>
@@ -112,9 +112,9 @@ const Index = () => {
             <CardFooter>
               <Button 
                 className="w-full"
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate("/auth?role=customer")}
               >
-                Open Customer App
+                Sign in as Customer
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardFooter>

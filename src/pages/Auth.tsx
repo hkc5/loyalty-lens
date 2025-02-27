@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,12 +12,25 @@ import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 
 const Auth = () => {
-  const [activeTab, setActiveTab] = useState<string>("sales");
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const roleParam = queryParams.get('role');
+  
+  const [activeTab, setActiveTab] = useState<string>(roleParam === 'sales' ? 'sales' : roleParam === 'customer' ? 'customer' : 'sales');
   const [identifier, setIdentifier] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   
   const { loginAsCustomer, loginAsSalesAssociate } = useAuth();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Set sample credentials based on selected role
+    if (activeTab === 'sales') {
+      setIdentifier(sampleCredentials.sales);
+    } else {
+      setIdentifier(sampleCredentials.customer);
+    }
+  }, [activeTab]);
   
   const handleLogin = () => {
     if (!identifier) {
@@ -76,7 +89,7 @@ const Auth = () => {
           </CardHeader>
           
           <CardContent>
-            <Tabs defaultValue="sales" className="w-full" onValueChange={setActiveTab}>
+            <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="sales">Sales Assistant</TabsTrigger>
                 <TabsTrigger value="customer">Customer</TabsTrigger>
@@ -98,7 +111,7 @@ const Auth = () => {
                   <div className="text-sm text-muted-foreground">
                     <p className="mb-1">Sample login (for testing):</p>
                     <RadioGroup 
-                      defaultValue={sampleCredentials.sales}
+                      value={identifier}
                       onValueChange={setIdentifier}
                     >
                       <div className="flex items-center space-x-2">
@@ -125,7 +138,7 @@ const Auth = () => {
                   <div className="text-sm text-muted-foreground">
                     <p className="mb-1">Sample login (for testing):</p>
                     <RadioGroup 
-                      defaultValue={sampleCredentials.customer}
+                      value={identifier}
                       onValueChange={setIdentifier}
                     >
                       <div className="flex items-center space-x-2">
