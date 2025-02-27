@@ -50,18 +50,6 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
     }, 500);
   };
   
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-    }
-  };
-  
-  const handleNext = () => {
-    if (currentIndex < products.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    }
-  };
-  
   const handleTouchStart = (e: React.TouchEvent) => {
     startXRef.current = e.touches[0].clientX;
   };
@@ -94,13 +82,9 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
-      handlePrevious();
-    } else if (e.key === 'ArrowRight') {
-      handleNext();
-    } else if (e.key === 'ArrowUp') {
-      handleLike();
-    } else if (e.key === 'ArrowDown') {
       handleDislike();
+    } else if (e.key === 'ArrowRight') {
+      handleLike();
     }
   };
   
@@ -125,28 +109,26 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
-      {/* Navigation Buttons */}
-      <div className="absolute top-1/2 -translate-y-1/2 left-0 z-10">
+      {/* Action Buttons with Arrow Icons - True Tinder-style */}
+      <div className="absolute top-1/2 -translate-y-1/2 left-4 z-10">
         <Button
           variant="outline"
           size="icon"
-          className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm shadow-sm"
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
+          className="h-12 w-12 rounded-full bg-destructive/10 hover:bg-destructive/20 border-destructive/50"
+          onClick={handleDislike}
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 text-destructive" />
         </Button>
       </div>
       
-      <div className="absolute top-1/2 -translate-y-1/2 right-0 z-10">
+      <div className="absolute top-1/2 -translate-y-1/2 right-4 z-10">
         <Button
           variant="outline"
           size="icon"
-          className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm shadow-sm"
-          onClick={handleNext}
-          disabled={currentIndex === products.length - 1}
+          className="h-12 w-12 rounded-full bg-primary/10 hover:bg-primary/20 border-primary/50"
+          onClick={handleLike}
         >
-          <ArrowRight className="h-5 w-5" />
+          <ArrowRight className="h-5 w-5 text-primary" />
         </Button>
       </div>
       
@@ -179,15 +161,10 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
         </Button>
       </div>
       
-      {/* Navigation indicator */}
+      {/* Product counter indicator */}
       <div className="absolute bottom-2 left-0 right-0 flex justify-center">
-        <div className="flex gap-1">
-          {products.map((_, index) => (
-            <div 
-              key={index}
-              className={`h-1.5 rounded-full ${index === currentIndex ? 'w-4 bg-primary' : 'w-1.5 bg-muted'}`}
-            ></div>
-          ))}
+        <div className="text-sm font-medium bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
+          {currentIndex + 1} of {products.length}
         </div>
       </div>
     </div>
