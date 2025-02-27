@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { Product } from "@/lib/data";
 import { Button } from "@/components/ui/button";
-import { Heart, X } from "lucide-react";
+import { Heart, X, ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import ProductCard from "./ProductCard";
 
@@ -50,6 +50,18 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
     }, 500);
   };
   
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+  
+  const handleNext = () => {
+    if (currentIndex < products.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  };
+  
   const handleTouchStart = (e: React.TouchEvent) => {
     startXRef.current = e.touches[0].clientX;
   };
@@ -80,6 +92,18 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
     startXRef.current = null;
   };
   
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      handlePrevious();
+    } else if (e.key === 'ArrowRight') {
+      handleNext();
+    } else if (e.key === 'ArrowUp') {
+      handleLike();
+    } else if (e.key === 'ArrowDown') {
+      handleDislike();
+    }
+  };
+  
   if (currentIndex >= products.length) {
     return (
       <div className="card-swiper flex flex-col items-center justify-center p-8 text-center">
@@ -96,7 +120,36 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
   }
   
   return (
-    <div className="card-swiper">
+    <div 
+      className="card-swiper"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
+      {/* Navigation Buttons */}
+      <div className="absolute top-1/2 -translate-y-1/2 left-0 z-10">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm shadow-sm"
+          onClick={handlePrevious}
+          disabled={currentIndex === 0}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
+      
+      <div className="absolute top-1/2 -translate-y-1/2 right-0 z-10">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm shadow-sm"
+          onClick={handleNext}
+          disabled={currentIndex === products.length - 1}
+        >
+          <ArrowRight className="h-5 w-5" />
+        </Button>
+      </div>
+      
       <div 
         className={`swipe-card ${swipingDirection ? `swiped-${swipingDirection}` : ''}`}
         onTouchStart={handleTouchStart}
@@ -124,6 +177,18 @@ const ProductSwiper = ({ products, onLike, onDislike }: ProductSwiperProps) => {
         >
           <Heart className="h-6 w-6 text-primary" />
         </Button>
+      </div>
+      
+      {/* Navigation indicator */}
+      <div className="absolute bottom-2 left-0 right-0 flex justify-center">
+        <div className="flex gap-1">
+          {products.map((_, index) => (
+            <div 
+              key={index}
+              className={`h-1.5 rounded-full ${index === currentIndex ? 'w-4 bg-primary' : 'w-1.5 bg-muted'}`}
+            ></div>
+          ))}
+        </div>
       </div>
     </div>
   );
